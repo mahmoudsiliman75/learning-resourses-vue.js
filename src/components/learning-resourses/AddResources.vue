@@ -3,17 +3,17 @@
     <form @submit.prevent="saveData">
       <div class="form-control">
         <lable for="title"> Title </lable>
-        <input id="title" name="title" type="text" ref="titleInput" required/>
+        <input id="title" name="title" type="text" ref="titleInput" />
       </div>
 
       <div class="form-control">
         <lable for="desc"> Description </lable>
-        <textarea id="desc" name="desc" rows="3" ref="descInput" required></textarea>
+        <textarea id="desc" name="desc" rows="3" ref="descInput" ></textarea>
       </div>
 
       <div class="form-control">
         <lable for="link"> Link </lable>
-        <input id="link" name="link" type="url" ref="linkInput" required/>
+        <input id="link" name="link" type="url" ref="linkInput" />
       </div>
 
       <div>
@@ -21,19 +21,47 @@
       </div>
     </form>
   </base-card>
+
+  <base-dialog v-if="inputIsInValid" title="Invalid Input" @close="closePopUp">
+    <template #default>
+      <p> At least one inpu value is invalid </p>
+      <p> Please check all inputs and write at leasst some characters in each input  </p>
+    </template>
+
+    <template #actions>
+      <base-button @click='closePopUp'> Okay </base-button>
+    </template>
+  </base-dialog>
 </template>
 
 <script>
+import BaseButton from '../ui/BaseButton.vue';
 export default {
+  components: {
+    BaseButton
+  },
   inject: ['addResource'],
+  data() {
+    return {
+      inputIsInValid: false,
+    }
+  },
   methods: {
     saveData() {
       const enteredTitle = this.$refs.titleInput.value;
       const enteredDesc = this.$refs.descInput.value;
       const enteredUrl = this.$refs.linkInput.value;
 
+      if ( enteredTitle.trim() == "" || enteredDesc.trim() == "" || enteredUrl.trim() == "" ) {
+        this.inputIsInValid = true;
+        return;
+      }
+
       this.addResource(enteredTitle, enteredDesc, enteredUrl)
-    }
+    },
+    closePopUp() {
+      this.inputIsInValid = false;
+    },
   },
 }
 </script>
